@@ -12,7 +12,7 @@ class CommentsController {
 
   createComment = async (req, res, next) => { 
     const { content } = req.body;
-    const { postId } = req.params;
+    const { postId } = req.params;  //
     const { nickname,userId } = res.locals.user;
  
     const createCommentsData = await this.commentService.createComment(userId,postId,content,nickname);
