@@ -4,7 +4,8 @@ class CommentsController {
   commentService = new CommentsService();
 
   getCommentsById = async (req, res, next) => {
-    const comments = await this.commentService.getCommentsById();
+    const {postId} = req.params;
+    const comments = await this.commentService.getCommentsById(postId);
 
     res.status(200).json({ data: comments });
   };
