@@ -1,14 +1,17 @@
 const { Users } = require("../models");
 
 class UserRepository {
+  constructor(){
+    this.Users = Users;
+  }
   findAllUser = async (nickname) => {
-    const users = await Users.findAll({where: {nickname}});
+    const users = await this.Users.findAll({where: {nickname}});
 
     return users;
   };
 
   createUser = async (nickname, password, salt) => {
-    const createUserData = await Users.create({
+    const createUserData = await this.Users.create({
       nickname,
       password,
       salt,
