@@ -17,12 +17,12 @@ class SignupController {
     });
     
     await schema.validateAsync(req.body);
-    const SignupUserData = await this.SignupService.createUser(
+    await this.SignupService.createUser(
         nickname,
         password,
         confirm
       );
-      res.status(201).json({ data: SignupUserData });
+      res.status(201).json({ message: "회원가입이 완료되었습니다." });
     }catch(e){
         return res.status(400).json({code:400, message: e.message})
     }

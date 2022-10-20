@@ -1,64 +1,79 @@
-
-const CommentsRepository = require("../repositories/comments.repository")
+const CommentsRepository = require("../repositories/comments.repository");
 
 class CommentsService {
-    commentsRepository = new CommentsRepository();
-  
-    getCommentsById = async () => {
-      const allComments = await this.commentsRepository.getCommentsById();
-  
-      allComments.sort((a, b) => {
-        return b.createdAt - a.createdAt;
-      })
+  commentsRepository = new CommentsRepository();
 
-      return allComments.map(comment => {
-        return {
-          userId: comment.userId,
-          commentId: comment.commentId,
-          nickname: comment.nickname,
-          content: comment.content, 
-          createdAt: comment.createdAt
-        }
-      });
-    }
-  
-    createComment = async (userId,postId,content,nickname) => {
-      const createCommentsData = await this.commentsRepository.createComment(userId,postId,content,nickname);
+  getCommentsById = async () => {
+    try{
+    const allComments = await this.commentsRepository.getCommentsById();
+      if(!allComments) {
+        throw {message:"해당 댓글이 없습니다."}
+      }
+    allComments.sort((a, b) => {
+      return b.createdAt - a.createdAt;
+    });
 
+    return allComments.map((comment) => {
       return {
-        commentId: createCommentsData.null,
-        userId: createCommentsData.userId,
-        postId: createCommentsData.postId,
-        content: createCommentsData.content,
-        nickname: createCommentsData.nickname,
-        createdAt: createCommentsData.createdAt,
-        updatedAt: createCommentsData.updatedAt
+        userId: comment.userId,
+        commentId: comment.commentId,
+        nickname: comment.nickname,
+        content: comment.content,
+        createdAt: comment.createdAt,
       };
+    });}catch(e){
+      return
     }
+  };
 
-    updateComment = async (commentId, content) => {
-      await this.commentsRepository.updateComment(commentId, content);
-      const updateCommentsData = await this.commentsRepository.CommentById(commentId);
+  createComment = async (userId, postId, content, nickname) => {
+    const createCommentsData = await this.commentsRepository.createComment(
+      userId,
+      postId,
+      content,
+      nickname
+    );
 
-      return {
-        commentId: updateCommentsData.null,
-        userId: updateCommentsData.userId,
-        postId: updateCommentsData.postId,
-        content: updateCommentsData.content,
-        nickname: updateCommentsData.nickname,
-        createdAt: updateCommentsData.createdAt,
-        updatedAt: updateCommentsData.updatedAt
-      };
+    return {
+      commentId: createCommentsData.null,
+      userId: createCommentsData.userId,
+      postId: createCommentsData.postId,
+      content: createCommentsData.content,
+      nickname: createCommentsData.nickname,
+      createdAt: createCommentsData.createdAt,
+      updatedAt: createCommentsData.updatedAt,
+    };
+  };
+
+  updateComment = async (commentId, content) => {
+    try{
+    await this.commentsRepository.updateComment(commentId, content);
+    const updateCommentsData = await this.commentsRepository.CommentById(
+      commentId
+    );
+    if(!updateCommentsData) throw {message:"해당 댓글이 없습니다."} 
+
+    return {
+      commentId: updateCommentsData.null,
+      userId: updateCommentsData.userId,
+      postId: updateCommentsData.postId,
+      content: updateCommentsData.content,
+      nickname: updateCommentsData.nickname,
+      createdAt: updateCommentsData.createdAt,
+      updatedAt: updateCommentsData.updatedAt,
+    };}catch(e){
+      return
     }
+  };
 
-    deleteComment = async (commentId) => {
-      await this.commentsRepository.deleteComment(commentId);
-      const destroyCommentsData = await this.commentsRepository.CommentById(commentId);
+  deleteComment = async (commentId) => {
+    await this.commentsRepository.deleteComment(commentId);
+    const destroyCommentsData = await this.commentsRepository.CommentById(
+      commentId
+    );
+   
+    return destroyCommentsData;
+  };
+}
 
-      return destroyCommentsData;
-      
-    }
-
-  }
-  
-  module.exports = CommentsService;
+module.exports = CommentsService;
